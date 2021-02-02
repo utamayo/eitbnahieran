@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>	
+<title>EITB Nahieran Lite</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<h1>EITB Nahieran Lite</h1>
+<input type='button' onclick='UpdateStatus()' value='Hasiera'/>
+<script>
+function clearBox(elementID)
+{
+    document.getElementById(elementID).innerHTML = "";
+}
+</script>
+
+<script>
+function UpdateStatus()
+{
+clearBox("diva");
+$.getJSON( "http://still-castle-99749.herokuapp.com/program-type-list", function( data ) {
+  var items = [];
+  var titulua;
+  var helbidea;
+  
+  $.each( data.member, function( key, val ) {
+  helbidea=val.title+".html";
+  titulua=val.title;
+  items.push('<input type="button" onclick="UpdateStatus2(\''+val["@id"]+'\')" value="'+titulua+'"/>');
+  });
+  
+  $( "<ul/>", {
+    "class": "my-new-list",
+    html: items.join( "" )
+  }).appendTo( "#diva" );
+});
+}
+</script>
+
+<script>
+function UpdateStatus2(urlea)
+{
+clearBox("diva");
+$.getJSON( urlea, function( data ) {
+	var titulua;
+	var deskribapena;
+	var resolucion;
+	var items = [];
+
+	if(data["@type"]==="Episode")
+	{
+		$.each( data.formats, function( key, val ) {
+			if(val.ext==="mp4")
+			{
+				resolucion=val.format;
+				items.push("<a href='"+val.url+"'>"+resolucion+"</a></br>");
+			}
+		});
+	}
+	else
+	{
+		$.each( data.member, function( key, val ) {
+			if(val["@type"]==="Episode")
+			{
+				titulua=val.title;
+				deskribapena=val.description;
+				items.push('<input type="button" onclick="UpdateStatus2(\''+val["@id"]+'\')" value="'+titulua+'"/></br><p>'+deskribapena+'</p>');
+			}
+			else
+			{
+				titulua=val.title;
+				items.push('<input type="button" onclick="UpdateStatus2(\''+val["@id"]+'\')" value="'+titulua+'"/></br>');
+			}
+		});
+	}
+
+	$( "<ul/>", {
+		"class": "my-new-list",
+		html: items.join( "" )
+	}).appendTo( "#diva" );
+});
+}
+</script>
+<div id="diva">
+</div>
+</body>
+</html>
