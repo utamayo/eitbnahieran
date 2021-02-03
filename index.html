@@ -13,12 +13,11 @@ function clearBox(elementID)
 {
     document.getElementById(elementID).innerHTML = "";
 }
-</script>
 
-<script>
 function UpdateStatus()
 {
 clearBox("diva");
+clearBox("menua");
 $.getJSON( "http://still-castle-99749.herokuapp.com/program-type-list", function( data ) {
   var items = [];
   var titulua;
@@ -27,21 +26,22 @@ $.getJSON( "http://still-castle-99749.herokuapp.com/program-type-list", function
   $.each( data.member, function( key, val ) {
   helbidea=val.title+".html";
   titulua=val.title;
-  items.push('<input type="button" onclick="UpdateStatus2(\''+val["@id"]+'\')" value="'+titulua+'"/>');
+  items.push('<input type="button" onclick="erakutsi(\''+val["@id"]+'\')" value="'+titulua+'"/>');
   });
   
-  $( "<ul/>", {
+  $( "<p/>", {
     "class": "my-new-list",
     html: items.join( "" )
-  }).appendTo( "#diva" );
+  }).appendTo( "#menua" );
 });
 }
-</script>
 
-<script>
 function UpdateStatus2(urlea)
 {
 clearBox("diva");
+clearBox("egoera");
+var $p = $('<p/>').append('Oraintxe agertuko dira aukerak...');
+$p.appendTo($('#egoera'));
 $.getJSON( urlea, function( data ) {
 	var titulua;
 	var deskribapena;
@@ -74,14 +74,21 @@ $.getJSON( urlea, function( data ) {
 			}
 		});
 	}
-
-	$( "<ul/>", {
+	
+	$( "<p/>", {
 		"class": "my-new-list",
 		html: items.join( "" )
 	}).appendTo( "#diva" );
 });
+
+//kargatuta();
+//$( "#egoera" ).empty();
 }
 </script>
+<div id="menua">
+</div>
+<div id="egoera">
+</div>
 <div id="diva">
 </div>
 </body>
