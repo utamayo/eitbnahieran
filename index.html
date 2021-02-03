@@ -26,7 +26,7 @@ $.getJSON( "http://still-castle-99749.herokuapp.com/program-type-list", function
   $.each( data.member, function( key, val ) {
   helbidea=val.title+".html";
   titulua=val.title;
-  items.push('<input type="button" onclick="erakutsi(\''+val["@id"]+'\')" value="'+titulua+'"/>');
+  items.push('<input type="button" onclick="UpdateStatus2(\''+val["@id"]+'\')" value="'+titulua+'"/>');
   });
   
   $( "<p/>", {
@@ -40,7 +40,7 @@ function UpdateStatus2(urlea)
 {
 clearBox("diva");
 clearBox("egoera");
-var $p = $('<p/>').append('Oraintxe agertuko dira aukerak...');
+var $p = $('<p/>').append('Kargatzen...');
 $p.appendTo($('#egoera'));
 $.getJSON( urlea, function( data ) {
 	var titulua;
