@@ -28,17 +28,17 @@ $.getJSON( "https://still-castle-99749.herokuapp.com/program-type-list", functio
   items.push('<input type="button" onclick="UpdateStatus2(\'https://still-castle-99749.herokuapp.com/last-broadcast-list?items=50\')" value="Azken Saioak"/>');
   items.push('<input type="button" onclick="UpdateStatus2(\'https://still-castle-99749.herokuapp.com/playlist\')" value="Guztiak"/>');
   $.each( data.member, function( key, val ) {
-  helbidea=val.title+".html";
-  titulua=val.title;
-  url=val["@id"];
-  url.replace("http", "https");
-  items.push('<input type="button" onclick="UpdateStatus2(\''+url+'\')" value="'+titulua.replace("<BR/>","")+'"/>');
-  });
-  
-  $( "<p/>", {
-    "class": "my-new-list",
-    html: items.join( "" )
-  }).appendTo( "#menua" );
+	  helbidea=val.title+".html";
+	  titulua=val.title;
+	  url=val["@id"];
+	  url.replace("http", "https");
+	  items.push('<input type="button" onclick="UpdateStatus2(\''+url+'\')" value="'+titulua.replace("<BR/>","")+'"/>');
+	  });
+	  
+	  $( "<p/>", {
+		"class": "my-new-list",
+		html: items.join( "" )
+	  }).appendTo( "#menua" );
 });
 }
 
@@ -57,7 +57,7 @@ $.getJSON( urlea, function( data ) {
 	var url;
 	var broadcast;
 	
-	if(Object.getOwnPropertyNames(parent).length != 0 && (parent!="http://still-castle-99749.herokuapp.com/playlist" || parent!="https://still-castle-99749.herokuapp.com/last-broadcast-list?items=50"))
+	if(Object.getOwnPropertyNames(parent).length != 0 && parent!="http://still-castle-99749.herokuapp.com/playlist")
 	{//Parent ez dago utzik
 		parent.replace("http", "https");
 		items.push('<input type="button" onclick="UpdateStatus2(\''+parent+'\')" value="Atzera" style="font-weight:bold;"/></br>');
