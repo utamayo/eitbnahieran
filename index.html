@@ -31,7 +31,6 @@ $.getJSON( "https://still-castle-99749.herokuapp.com/program-type-list", functio
 	  helbidea=val.title+".html";
 	  titulua=val.title;
 	  url=val["@id"].replace("http","https");
-	  console.log(url);
 	  items.push('<input type="button" onclick="UpdateStatus2(\''+url+'\')" value="'+titulua.replace("<BR/>","")+'"/>');
 	  });
 	  
