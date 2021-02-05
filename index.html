@@ -7,7 +7,8 @@
 </head>
 <body>
 <h1>EITB Nahieran Lite</h1>
-<input type='button' onclick='UpdateStatus()' value='Hasiera'/>
+<p><u>Aukeratu:</u></p>
+<input type='button' onclick='UpdateStatus()' value='TV' style='font-weight:bold;'/>
 <script>
 function clearBox(elementID)
 {
@@ -22,11 +23,16 @@ $.getJSON( "http://still-castle-99749.herokuapp.com/program-type-list", function
   var items = [];
   var titulua;
   var helbidea;
+  var url;
   
+  items.push('<input type="button" onclick="UpdateStatus2(\'https://still-castle-99749.herokuapp.com/last-broadcast-list?items=50\')" value="Azken Saioak"/>');
+  items.push('<input type="button" onclick="UpdateStatus2(\'https://still-castle-99749.herokuapp.com/playlist\')" value="Guztiak"/>');
   $.each( data.member, function( key, val ) {
   helbidea=val.title+".html";
   titulua=val.title;
-  items.push('<input type="button" onclick="UpdateStatus2(\''+val["@id"]+'\')" value="'+titulua+'"/>');
+  url=val["@id"];
+  url.replace("http", "https");
+  items.push('<input type="button" onclick="UpdateStatus2(\''+url+'\')" value="'+titulua.replace("<BR/>","")+'"/>');
   });
   
   $( "<p/>", {
@@ -47,9 +53,19 @@ $.getJSON( urlea, function( data ) {
 	var deskribapena;
 	var resolucion;
 	var items = [];
+	var parent=data.parent;
+	var url;
+	var broadcast;
+	
+	if(Object.getOwnPropertyNames(parent).length != 0 && (parent!="http://still-castle-99749.herokuapp.com/playlist" || parent!="https://still-castle-99749.herokuapp.com/last-broadcast-list?items=50"))
+	{//Parent ez dago utzik
+		parent.replace("http", "https");
+		items.push('<input type="button" onclick="UpdateStatus2(\''+parent+'\')" value="Atzera" style="font-weight:bold;"/></br>');
+	}
 
 	if(data["@type"]==="Episode")
 	{
+		items.push("<p>Aukeratu bideoaren bereizmena:</p></br>");
 		$.each( data.formats, function( key, val ) {
 			if(val.ext==="mp4")
 			{
@@ -61,16 +77,24 @@ $.getJSON( urlea, function( data ) {
 	else
 	{
 		$.each( data.member, function( key, val ) {
+			url=val["@id"];
+			url.replace("http", "https");
 			if(val["@type"]==="Episode")
 			{
 				titulua=val.title;
 				deskribapena=val.description;
-				items.push('<input type="button" onclick="UpdateStatus2(\''+val["@id"]+'\')" value="'+titulua+'"/></br><p>'+deskribapena+'</p>');
+				if(val.broadcast_date == null){
+					broadcast="";
+				}
+				else{
+					broadcast=val.broadcast_date.substring(0,10);
+				}
+				items.push('<input type="button" onclick="UpdateStatus2(\''+url+'\')" value="'+titulua+'"/>'+broadcast+'</br><p>'+deskribapena+'</p>');
 			}
 			else
 			{
 				titulua=val.title;
-				items.push('<input type="button" onclick="UpdateStatus2(\''+val["@id"]+'\')" value="'+titulua+'"/></br>');
+				items.push('<input type="button" onclick="UpdateStatus2(\''+url+'\')" value="'+titulua+'"/></br>');
 			}
 		});
 	}
@@ -81,7 +105,6 @@ $.getJSON( urlea, function( data ) {
 	}).appendTo( "#diva" );
 	$( "#egoera" ).empty();
 });
-//$( "#egoera" ).empty();
 }
 </script>
 <div id="menua">
