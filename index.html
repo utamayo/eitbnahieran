@@ -58,7 +58,7 @@ $.getJSON( urlea, function( data ) {
 	
 	if(Object.getOwnPropertyNames(parent).length != 0 && parent!="http://still-castle-99749.herokuapp.com/playlist")
 	{//Parent ez dago utzik
-		parent.replace("http", "https");
+		parent=parent.replace("http", "https");
 		items.push('<input type="button" onclick="UpdateStatus2(\''+parent+'\')" value="Atzera" style="font-weight:bold;"/></br>');
 	}
 
@@ -76,8 +76,7 @@ $.getJSON( urlea, function( data ) {
 	else
 	{
 		$.each( data.member, function( key, val ) {
-			url=val["@id"];
-			url.replace("http", "https");
+			url=val["@id"].replace("http","https");
 			if(val["@type"]==="Episode")
 			{
 				titulua=val.title;
