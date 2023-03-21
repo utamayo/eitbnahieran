@@ -2,33 +2,29 @@
 <html lang="es">
 
 <head>
-	<meta http-equiv="Content-Type" content="text/html" />
-	<meta charset="UTF-8">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title>EITB Nahieran Lite</title>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
 <body>
 	<h1>EITB Nahieran Lite</h1>
-	<p><u>Aukeratu:</u></p>
-	<input type='button' onclick='UpdateStatus()' value='TV' style='font-weight:bold;' />
+	<input type='button' onclick='UpdateStatus()' value='Hasiera' />
 	<script>
 		function clearBox(elementID) {
 			document.getElementById(elementID).innerHTML = "";
 		}
+	</script>
 
+	<script>
 		function UpdateStatus() {
 			clearBox("diva");
 			$.getJSON("https://eitbapi.utamayo.workers.dev/tv", function (data) {
 				var items = [];
 				var titulua;
 				var helbidea;
-				var url;
 
-				items.push('<input type="button" onclick="UpdateStatus2(\'https://still-castle-99749.herokuapp.com/last-broadcast-list?items=50\')" value="Azken Saioak"/>');
-				items.push('<input type="button" onclick="UpdateStatus2(\'https://still-castle-99749.herokuapp.com/playlist\')" value="Guztiak"/>');
 				$.each(data.member, function (key, val) {
-					//helbidea=val.title+".html";
 					helbidea = val["@id"];
 					titulua = val.title_es;
 					items.push('<input type="button" onclick="UpdateStatus2(\'' + val["@id"] + '\')" value="' + val.title_es + '"/>');
@@ -40,12 +36,11 @@
 				}).appendTo("#diva");
 			});
 		}
+	</script>
 
+	<script>
 		function UpdateStatus2(urlea) {
 			clearBox("diva");
-			clearBox("egoera");
-			var $p = $('<p/>').append('Kargatzen...');
-			$p.appendTo($('#egoera'));
 			$.getJSON(urlea, function (data) {
 				var idea = data["@id"];
 				var urla = this.url;
@@ -71,39 +66,28 @@
 						items.push('<input type="button" onclick="UpdateStatus2(\'' + enlace + '\')" value="' + titulua + '"/></br><p>' + deskribapena + '</p>');
 
 					});
-				}//onarte
+				}
 				else {
 					$.each(data.member, function (key, val) {
 						if (val["@type"] === "TV Program Chapter") {
 							titulua = val.title;
 							deskribapena = val.description;
-							if (val.broadcast_date == null) {
-								broadcast = "";
-							}
-							else {
-								broadcast = val.broadcast_date.substring(0, 10);
-							}
-							items.push('<input type="button" onclick="UpdateStatus2(\'' + url + '\')" value="' + titulua + '"/>' + broadcast + '</br><p>' + deskribapena + '</p>');
+							items.push('<input type="button" onclick="UpdateStatus2(\'' + val["@id"] + '\')" value="' + titulua + '"/></br><p>' + deskribapena + '</p>');
 						}
 						else {
 							titulua = val.title;
-							items.push('<input type="button" onclick="UpdateStatus2(\'' + url + '\')" value="' + titulua + '"/></br>');
+							items.push('<input type="button" onclick="UpdateStatus2(\'' + val["@id"] + '\')" value="' + titulua + '"/></br>');
 						}
 					});
 				}
 
-				$("<p/>", {
+				$("<ul/>", {
 					"class": "my-new-list",
 					html: items.join("")
 				}).appendTo("#diva");
-				$("#egoera").empty();
 			});
 		}
 	</script>
-	<div id="menua">
-	</div>
-	<div id="egoera">
-	</div>
 	<div id="diva">
 	</div>
 </body>
