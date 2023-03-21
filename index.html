@@ -10,6 +10,7 @@
 <body>
 	<h1>EITB Nahieran Lite</h1>
 	<input type='button' onclick='UpdateStatus()' value='Hasiera' />
+	<input type='button' onclick='ProgramaGuztiak()' value='Programa Guztiak' />
 	<script>
 		function clearBox(elementID) {
 			document.getElementById(elementID).innerHTML = "";
@@ -28,6 +29,28 @@
 					helbidea = val["@id"];
 					titulua = val.title_es;
 					items.push('<input type="button" onclick="UpdateStatus2(\'' + val["@id"] + '\')" value="' + val.title_es + '"/>');
+				});
+
+				$("<ul/>", {
+					"class": "my-new-list",
+					html: items.join("")
+				}).appendTo("#diva");
+			});
+		}
+	</script>
+
+	<script>
+		function ProgramaGuztiak() {
+			clearBox("diva");
+			$.getJSON("https://eitbapi.utamayo.workers.dev/tv/programs", function (data) {
+				var items = [];
+				var titulua;
+				var helbidea;
+
+				$.each(data.member, function (key, val) {
+					helbidea = val["@id"];
+					titulua = val.title;
+					items.push('<input type="button" onclick="UpdateStatus2(\'' + val["@id"] + '\')" value="' + val.title + '"/>');
 				});
 
 				$("<ul/>", {
