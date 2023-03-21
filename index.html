@@ -18,8 +18,7 @@ function clearBox(elementID)
 function UpdateStatus()
 {
 clearBox("diva");
-clearBox("menua");
-$.getJSON( "https://still-castle-99749.herokuapp.com/program-type-list", function( data ) {
+$.getJSON( "https://eitbapi.utamayo.workers.dev/tv", function( data ) {
   var items = [];
   var titulua;
   var helbidea;
@@ -28,16 +27,16 @@ $.getJSON( "https://still-castle-99749.herokuapp.com/program-type-list", functio
   items.push('<input type="button" onclick="UpdateStatus2(\'https://still-castle-99749.herokuapp.com/last-broadcast-list?items=50\')" value="Azken Saioak"/>');
   items.push('<input type="button" onclick="UpdateStatus2(\'https://still-castle-99749.herokuapp.com/playlist\')" value="Guztiak"/>');
   $.each( data.member, function( key, val ) {
-	  helbidea=val.title+".html";
-	  titulua=val.title;
-	  url=val["@id"].replace("http","https");
-	  items.push('<input type="button" onclick="UpdateStatus2(\''+url+'\')" value="'+titulua.replace("<BR/>","")+'"/>');
-	  });
-	  
-	  $( "<p/>", {
-		"class": "my-new-list",
-		html: items.join( "" )
-	  }).appendTo( "#menua" );
+  //helbidea=val.title+".html";
+  helbidea=val["@id"];
+  titulua=val.title_es;
+  items.push('<input type="button" onclick="UpdateStatus2(\''+val["@id"]+'\')" value="'+val.title_es+'"/>');
+  });
+  
+  $( "<ul/>", {
+    "class": "my-new-list",
+    html: items.join( "" )
+  }).appendTo( "#diva" );
 });
 }
 
@@ -48,36 +47,37 @@ clearBox("egoera");
 var $p = $('<p/>').append('Kargatzen...');
 $p.appendTo($('#egoera'));
 $.getJSON( urlea, function( data ) {
+	var idea=data["@id"];
+	var urla=this.url;
 	var titulua;
 	var deskribapena;
 	var resolucion;
 	var items = [];
-	var parent=data.parent;
-	var url;
-	var broadcast;
-	
-	if(Object.getOwnPropertyNames(parent).length != 0 && parent!="http://still-castle-99749.herokuapp.com/playlist")
-	{//Parent ez dago utzik
-		parent=parent.replace("http", "https");
-		items.push('<input type="button" onclick="UpdateStatus2(\''+parent+'\')" value="Atzera" style="font-weight:bold;"/></br>');
-	}
+	var enlace;
 
-	if(data["@type"]==="Episode")
+	if(data["@type"]==="TV Program Chapter")
 	{
-		items.push("<p>Aukeratu bideoaren bereizmena:</p></br>");
-		$.each( data.formats, function( key, val ) {
-			if(val.ext==="mp4")
-			{
-				resolucion=val.format;
+		$.each( data.playlist, function( key, val ) {
+			$.each(val.videos, function(key,val){
+				resolucion=val.height+"x"+val.width;
 				items.push("<a href='"+val.url+"'>"+resolucion+"</a></br>");
-			}
+			});
 		});
 	}
+	else if(data["@type"]==="TV Category Program Playlist")
+	{
+		$.each( data.member, function( key, val ) {
+				titulua=val.title;
+				deskribapena=val.description;
+				enlace=urla+"/"+ val["@id"].substring(val["@id"].lastIndexOf("/") + 1, val["@id"].length);
+				items.push('<input type="button" onclick="UpdateStatus2(\''+enlace+'\')" value="'+titulua+'"/></br><p>'+deskribapena+'</p>');
+
+		});
+	}//onarte
 	else
 	{
 		$.each( data.member, function( key, val ) {
-			url=val["@id"].replace("http","https");
-			if(val["@type"]==="Episode")
+			if(val["@type"]==="TV Program Chapter")
 			{
 				titulua=val.title;
 				deskribapena=val.description;
