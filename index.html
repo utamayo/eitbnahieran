@@ -19,15 +19,16 @@ function clearBox(elementID)
 function UpdateStatus()
 {
 clearBox("diva");
-$.getJSON( "http://still-castle-99749.herokuapp.com/program-type-list", function( data ) {
+$.getJSON( "https://eitbapi.utamayo.workers.dev/tv", function( data ) {
   var items = [];
   var titulua;
   var helbidea;
   
   $.each( data.member, function( key, val ) {
-  helbidea=val.title+".html";
-  titulua=val.title;
-  items.push('<input type="button" onclick="UpdateStatus2(\''+val["@id"]+'\')" value="'+titulua+'"/>');
+  //helbidea=val.title+".html";
+  helbidea=val["@id"];
+  titulua=val.title_es;
+  items.push('<input type="button" onclick="UpdateStatus2(\''+val["@id"]+'\')" value="'+val.title_es+'"/>');
   });
   
   $( "<ul/>", {
@@ -43,25 +44,37 @@ function UpdateStatus2(urlea)
 {
 clearBox("diva");
 $.getJSON( urlea, function( data ) {
+	var idea=data["@id"];
+	var urla=this.url;
 	var titulua;
 	var deskribapena;
 	var resolucion;
 	var items = [];
+	var enlace;
 
-	if(data["@type"]==="Episode")
+	if(data["@type"]==="TV Program Chapter")
 	{
-		$.each( data.formats, function( key, val ) {
-			if(val.ext==="mp4")
-			{
-				resolucion=val.format;
+		$.each( data.playlist, function( key, val ) {
+			$.each(val.videos, function(key,val){
+				resolucion=val.height+"x"+val.width;
 				items.push("<a href='"+val.url+"'>"+resolucion+"</a></br>");
-			}
+			});
 		});
 	}
+	else if(data["@type"]==="TV Category Program Playlist")
+	{
+		$.each( data.member, function( key, val ) {
+				titulua=val.title;
+				deskribapena=val.description;
+				enlace=urla+"/"+ val["@id"].substring(val["@id"].lastIndexOf("/") + 1, val["@id"].length);
+				items.push('<input type="button" onclick="UpdateStatus2(\''+enlace+'\')" value="'+titulua+'"/></br><p>'+deskribapena+'</p>');
+
+		});
+	}//onarte
 	else
 	{
 		$.each( data.member, function( key, val ) {
-			if(val["@type"]==="Episode")
+			if(val["@type"]==="TV Program Chapter")
 			{
 				titulua=val.title;
 				deskribapena=val.description;
