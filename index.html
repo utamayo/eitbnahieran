@@ -1,115 +1,111 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>	
-<title>EITB Nahieran Lite</title>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<meta http-equiv="Content-Type" content="text/html" />
+	<meta charset="UTF-8">
+	<title>EITB Nahieran Lite</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
+
 <body>
-<h1>EITB Nahieran Lite</h1>
-<p><u>Aukeratu:</u></p>
-<input type='button' onclick='UpdateStatus()' value='TV' style='font-weight:bold;'/>
-<script>
-function clearBox(elementID)
-{
-    document.getElementById(elementID).innerHTML = "";
-}
+	<h1>EITB Nahieran Lite</h1>
+	<p><u>Aukeratu:</u></p>
+	<input type='button' onclick='UpdateStatus()' value='TV' style='font-weight:bold;' />
+	<script>
+		function clearBox(elementID) {
+			document.getElementById(elementID).innerHTML = "";
+		}
 
-function UpdateStatus()
-{
-clearBox("diva");
-$.getJSON( "https://eitbapi.utamayo.workers.dev/tv", function( data ) {
-  var items = [];
-  var titulua;
-  var helbidea;
-  var url;
-  
-  items.push('<input type="button" onclick="UpdateStatus2(\'https://still-castle-99749.herokuapp.com/last-broadcast-list?items=50\')" value="Azken Saioak"/>');
-  items.push('<input type="button" onclick="UpdateStatus2(\'https://still-castle-99749.herokuapp.com/playlist\')" value="Guztiak"/>');
-  $.each( data.member, function( key, val ) {
-  //helbidea=val.title+".html";
-  helbidea=val["@id"];
-  titulua=val.title_es;
-  items.push('<input type="button" onclick="UpdateStatus2(\''+val["@id"]+'\')" value="'+val.title_es+'"/>');
-  });
-  
-  $( "<ul/>", {
-    "class": "my-new-list",
-    html: items.join( "" )
-  }).appendTo( "#diva" );
-});
-}
+		function UpdateStatus() {
+			clearBox("diva");
+			$.getJSON("https://eitbapi.utamayo.workers.dev/tv", function (data) {
+				var items = [];
+				var titulua;
+				var helbidea;
+				var url;
 
-function UpdateStatus2(urlea)
-{
-clearBox("diva");
-clearBox("egoera");
-var $p = $('<p/>').append('Kargatzen...');
-$p.appendTo($('#egoera'));
-$.getJSON( urlea, function( data ) {
-	var idea=data["@id"];
-	var urla=this.url;
-	var titulua;
-	var deskribapena;
-	var resolucion;
-	var items = [];
-	var enlace;
+				items.push('<input type="button" onclick="UpdateStatus2(\'https://still-castle-99749.herokuapp.com/last-broadcast-list?items=50\')" value="Azken Saioak"/>');
+				items.push('<input type="button" onclick="UpdateStatus2(\'https://still-castle-99749.herokuapp.com/playlist\')" value="Guztiak"/>');
+				$.each(data.member, function (key, val) {
+					//helbidea=val.title+".html";
+					helbidea = val["@id"];
+					titulua = val.title_es;
+					items.push('<input type="button" onclick="UpdateStatus2(\'' + val["@id"] + '\')" value="' + val.title_es + '"/>');
+				});
 
-	if(data["@type"]==="TV Program Chapter")
-	{
-		$.each( data.playlist, function( key, val ) {
-			$.each(val.videos, function(key,val){
-				resolucion=val.height+"x"+val.width;
-				items.push("<a href='"+val.url+"'>"+resolucion+"</a></br>");
+				$("<ul/>", {
+					"class": "my-new-list",
+					html: items.join("")
+				}).appendTo("#diva");
 			});
-		});
-	}
-	else if(data["@type"]==="TV Category Program Playlist")
-	{
-		$.each( data.member, function( key, val ) {
-				titulua=val.title;
-				deskribapena=val.description;
-				enlace=urla+"/"+ val["@id"].substring(val["@id"].lastIndexOf("/") + 1, val["@id"].length);
-				items.push('<input type="button" onclick="UpdateStatus2(\''+enlace+'\')" value="'+titulua+'"/></br><p>'+deskribapena+'</p>');
+		}
 
-		});
-	}//onarte
-	else
-	{
-		$.each( data.member, function( key, val ) {
-			if(val["@type"]==="TV Program Chapter")
-			{
-				titulua=val.title;
-				deskribapena=val.description;
-				if(val.broadcast_date == null){
-					broadcast="";
+		function UpdateStatus2(urlea) {
+			clearBox("diva");
+			clearBox("egoera");
+			var $p = $('<p/>').append('Kargatzen...');
+			$p.appendTo($('#egoera'));
+			$.getJSON(urlea, function (data) {
+				var idea = data["@id"];
+				var urla = this.url;
+				var titulua;
+				var deskribapena;
+				var resolucion;
+				var items = [];
+				var enlace;
+
+				if (data["@type"] === "TV Program Chapter") {
+					$.each(data.playlist, function (key, val) {
+						$.each(val.videos, function (key, val) {
+							resolucion = val.height + "x" + val.width;
+							items.push("<a href='" + val.url + "'>" + resolucion + "</a></br>");
+						});
+					});
 				}
-				else{
-					broadcast=val.broadcast_date.substring(0,10);
+				else if (data["@type"] === "TV Category Program Playlist") {
+					$.each(data.member, function (key, val) {
+						titulua = val.title;
+						deskribapena = val.description;
+						enlace = urla + "/" + val["@id"].substring(val["@id"].lastIndexOf("/") + 1, val["@id"].length);
+						items.push('<input type="button" onclick="UpdateStatus2(\'' + enlace + '\')" value="' + titulua + '"/></br><p>' + deskribapena + '</p>');
+
+					});
+				}//onarte
+				else {
+					$.each(data.member, function (key, val) {
+						if (val["@type"] === "TV Program Chapter") {
+							titulua = val.title;
+							deskribapena = val.description;
+							if (val.broadcast_date == null) {
+								broadcast = "";
+							}
+							else {
+								broadcast = val.broadcast_date.substring(0, 10);
+							}
+							items.push('<input type="button" onclick="UpdateStatus2(\'' + url + '\')" value="' + titulua + '"/>' + broadcast + '</br><p>' + deskribapena + '</p>');
+						}
+						else {
+							titulua = val.title;
+							items.push('<input type="button" onclick="UpdateStatus2(\'' + url + '\')" value="' + titulua + '"/></br>');
+						}
+					});
 				}
-				items.push('<input type="button" onclick="UpdateStatus2(\''+url+'\')" value="'+titulua+'"/>'+broadcast+'</br><p>'+deskribapena+'</p>');
-			}
-			else
-			{
-				titulua=val.title;
-				items.push('<input type="button" onclick="UpdateStatus2(\''+url+'\')" value="'+titulua+'"/></br>');
-			}
-		});
-	}
-	
-	$( "<p/>", {
-		"class": "my-new-list",
-		html: items.join( "" )
-	}).appendTo( "#diva" );
-	$( "#egoera" ).empty();
-});
-}
-</script>
-<div id="menua">
-</div>
-<div id="egoera">
-</div>
-<div id="diva">
-</div>
+
+				$("<p/>", {
+					"class": "my-new-list",
+					html: items.join("")
+				}).appendTo("#diva");
+				$("#egoera").empty();
+			});
+		}
+	</script>
+	<div id="menua">
+	</div>
+	<div id="egoera">
+	</div>
+	<div id="diva">
+	</div>
 </body>
+
 </html>
